@@ -1,0 +1,33 @@
+#!/bin/bash
+
+BASEDIR=`pwd`
+
+cd fsbuild; wget http://www.fsbuild.com/dl/fsb2_navdata_update.zip; unzip fsb2_navdata_update.zip;
+
+cd $BASEDIR
+
+# Build the nav data files, based on fsbuild
+echo "Loading fsbuild data"
+php -f ./fsbuildparse.php
+
+# Next correlate it with FAA data
+echo "Loading FAA data"
+php -f faaparse.php
+
+# And now correlate it with EAP data
+echo "Loading EAP data"
+
+echo "Loading xplane data"
+php -f xplane.php
+
+echo "Packaging and building..."
+# Finally build it out
+rm navdata.sql
+rm navdata.zip
+
+mysqldump -unavdata -pnavdata navdata phpvms_navdata > navdata.sql
+
+gzip -c navdata.sql > navdata.sql.gz
+zip navdata navdata.sql navdata.sql.gz
+
+echo "Done!"

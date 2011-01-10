@@ -1,0 +1,69 @@
+How to load NAVDATA for phpVMS
+-------------
+
+This script needs to be cleaned up and fixed, it's mostly hardcoded.
+Change the database parameters in the "db.php" file. If you set it to
+your phpVMS database, it will right directly to the proper phpvms_navdata
+table. 
+
+If not writing directly to phpVMS, use the following SQL to create the table:
+
+
+CREATE TABLE IF NOT EXISTS `phpvms_navdata` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(7) NOT NULL,
+  `title` varchar(25) NOT NULL,
+  `airway` varchar(7) DEFAULT NULL,
+  `airway_type` varchar(1) DEFAULT NULL,
+  `seq` int(11) NOT NULL,
+  `loc` varchar(4) NOT NULL,
+  `lat` float(8,6) NOT NULL,
+  `lng` float(9,6) NOT NULL,
+  `freq` varchar(7) NOT NULL,
+  `type` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `name` (`name`),
+  KEY `airway` (`airway`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=89432 ;
+
+
+
+
+Getting the data
+--------------
+
+Some of this data can be huge
+
+In the faa folder, download the FAA 56 day NASR Subscription:
+http://nfdc.faa.gov/fadds/index.jsp
+
+This requires a free subscription. They do send update notices when a new
+56-day is available.
+
+Extract the zip into the faa folder (so all the files are in that folder)
+
+Next, get the XPLANE data, from:
+http://data.x-plane.com/get_data.html
+
+Download the X-Plane 9.00 version. Extract that into the xplane folder 
+That will add a Resources folder with data in that.
+
+The import script will attempt to get the latest fsbuild data, if not,
+you can download it from the FSBUILD home page, and extract the files 
+in the FSBUILD folder
+
+
+
+Running the script
+----------------
+
+On the command line, to set the permissions:
+
+  chmod +x ./importdata
+ 
+Then run it:
+
+  ./importdata
+
+That will write the temporary nav to the phpvms_navdata table, and then
+create a dump of the navdata.sql file as well. You should be set then
